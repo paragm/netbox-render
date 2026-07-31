@@ -34,7 +34,7 @@ Bays sort alphabetically by name — there's no numeric position field in NetBox
 
 | NetBox | Plugin | Status |
 |--------|--------|--------|
-| 4.6.x  | 0.1.3  | Tested |
+| 4.6.x  | 0.1.4  | Tested |
 
 Startup checks verify the patched method signature hasn't changed. If it has, the plugin raises a `RuntimeError` instead of loading.
 

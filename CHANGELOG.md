@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.4 (2026-07-31)
+
+Cleaned up docs. No code changes.
+
 ## v0.1.3 (2026-07-31)
 
 Docs and publishing prep. No code changes.
