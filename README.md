@@ -23,7 +23,7 @@ Devices without bays are untouched.
 
 | Without plugin | With plugin |
 |:-:|:-:|
-| ![Stock NetBox elevation](docs/images/elevation-without-plugin.png) | ![With netbox-render](docs/images/elevation-with-plugin.png) |
+| ![Stock NetBox elevation](https://raw.githubusercontent.com/paragm/netbox-render/main/docs/images/elevation-without-plugin.png) | ![With netbox-render](https://raw.githubusercontent.com/paragm/netbox-render/main/docs/images/elevation-with-plugin.png) |
 | Single opaque block | Subdivided with bay labels and role colors |
 
 ### Bay ordering
