@@ -1,0 +1,49 @@
+---
+name: Bug Report
+description: Report a bug in netbox-render.
+labels: ["type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Only for reproducible bugs in the latest version on a recent NetBox.
+        For help or questions, start a
+        [discussion](https://github.com/paragm/netbox-render/discussions).
+        For security issues, use
+        [security advisories](https://github.com/paragm/netbox-render/security/advisories/new).
+  - type: input
+    attributes:
+      label: NetBox version
+      placeholder: v4.6.7
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: netbox-render version
+      description: Only the latest version is supported.
+      placeholder: v0.1.3
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: >
+        Include device type config (U height, bay count, subdevice role)
+        and rack setup.
+      placeholder: |
+        1. Create a device type with 4 device bay templates
+        2. Create a device in a rack
+        3. Install a child device in bay 1
+        4. View the rack elevation
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Observed behavior
+    validations:
+      required: true

@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: pip install -e .
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+  check-compat-table:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify README compatibility table matches __init__.py
+        run: |
+          MIN=$(sed -n "s/.*min_version *= *'\([^']*\)'.*/\1/p" netbox_render/__init__.py)
+          MAX=$(sed -n "s/.*max_version *= *'\([^']*\)'.*/\1/p" netbox_render/__init__.py)
+          VERSION=$(sed -n 's/.*__version__ *= *"\([^"]*\)".*/\1/p' netbox_render/version.py)
+
+          MIN_MAJOR_MINOR=$(echo "$MIN" | cut -d. -f1,2)
+          MAX_MAJOR_MINOR=$(echo "$MAX" | cut -d. -f1,2)
+
+          echo "Code:   min_version=$MIN  max_version=$MAX  plugin_version=$VERSION"
+          echo "Range:  ${MIN_MAJOR_MINOR}.x through ${MAX_MAJOR_MINOR}.x"
+
+          ERRORS=0
+
+          if ! grep -q "^| ${MIN_MAJOR_MINOR}\.x" README.md; then
+            echo "ERROR: README compatibility table missing entry for ${MIN_MAJOR_MINOR}.x"
+            ERRORS=1
+          fi
+
+          if ! grep -q "${VERSION}" README.md; then
+            echo "ERROR: README compatibility table missing plugin version ${VERSION}"
+            ERRORS=1
+          fi
+
+          echo "Code declares: min=${MIN} max=${MAX}"
+          README_LINE=$(grep "^| [0-9]" README.md | tail -1)
+          echo "Latest README table row: ${README_LINE}"
+
+          if [ "$ERRORS" -ne 0 ]; then
+            echo ""
+            echo "The README.md compatibility table is out of sync with netbox_render/__init__.py."
+            echo "Update the table in README.md to match min_version/max_version/plugin version."
+            exit 1
+          fi
+
+          echo "Compatibility table is in sync."

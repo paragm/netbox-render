@@ -1,0 +1,41 @@
+---
+name: Feature Request
+description: Propose a feature or enhancement.
+labels: ["type: enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        This plugin is narrow in scope — rack elevation rendering for device bays.
+        Requests outside that scope will likely be closed.
+        If the idea isn't fully formed, start a
+        [discussion](https://github.com/paragm/netbox-render/discussions) first.
+  - type: input
+    attributes:
+      label: NetBox version
+      placeholder: v4.6.7
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: netbox-render version
+      placeholder: v0.1.3
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed change
+      description: What should change and how?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Use case
+      description: What problem does this solve?
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Volunteering
+      options:
+        - label: I'm willing to submit a PR for this.

@@ -1,0 +1,79 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tools
+        run: pip install build
+      - name: Build package
+        run: python -m build
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract version from tag
+        id: version
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          VERSION="${TAG#v}"
+          NOTES=$(sed -n "/^## ${TAG}\b\|^## v\?${VERSION}\b/,/^## /{ /^## ${TAG}\b\|^## v\?${VERSION}\b/d; /^## /d; p; }" CHANGELOG.md)
+          echo "notes<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$NOTES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          NOTES: ${{ steps.changelog.outputs.notes }}
+        run: |
+          if [ -n "$NOTES" ]; then
+            # Combine manual changelog + auto-generated commit notes
+            gh release create "$TAG" dist/* --title "$TAG" --generate-notes --notes-start-tag "$TAG" \
+              --notes "$(printf '%s\n\n---\n\n' "$NOTES")$(gh api repos/${{ github.repository }}/releases/generate-notes -f tag_name="$TAG" --jq .body)"
+          else
+            # No manual changelog entry — use auto-generated only
+            gh release create "$TAG" dist/* --title "$TAG" --generate-notes
+          fi
