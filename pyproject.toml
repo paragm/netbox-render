@@ -10,7 +10,6 @@ keywords = ['netbox-render', 'netbox', 'netbox-plugin', 'netbox plugin', 'netbox
 readme = "README.md"
 requires-python = ">=3.12.0"
 license = "Apache-2.0"
-License-File: LICENSE
 authors = [
     {name = "Parag Mehta", email = "pmehta@pmehta.com"},
 ]
@@ -24,7 +23,6 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://pypi.org/project/netbox-render/"
-Release Notes = "https://github.com/paragm/netbox-render/releases"
 GitHub = "https://github.com/paragm/netbox-render"
 Repository = "https://github.com/paragm/netbox-render.git"
 Changelog = "https://github.com/paragm/netbox-render/blob/main/CHANGELOG.md"
