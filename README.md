@@ -74,7 +74,7 @@ When enabled, bay sections show the child device type's front/rear image with a 
 
 ## Shelf device guide
 
-See [docs/shelf-devices-guide.md](docs/shelf-devices-guide.md) for a walkthrough on modeling rack shelves using device bays and how this plugin renders them.
+See [Shelf-devices Guide](https://raw.githubusercontent.com/paragm/netbox-render/main/docs/shelf-devices-guide.md) for a walkthrough on modeling rack shelves using device bays and how this plugin renders them.
 
 ## Known limitations
 
