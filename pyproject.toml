@@ -6,9 +6,11 @@ build-backend = "setuptools.build_meta"
 name = "netbox-render"
 dynamic = ["version"]
 description = "NetBox plugin for subdivided device bay rack elevation rendering"
+keywords = ['netbox-render', 'netbox', 'netbox-plugin', 'netbox plugin', 'netbox community plugin']
 readme = "README.md"
 requires-python = ">=3.12.0"
 license = "Apache-2.0"
+License-File: LICENSE
 authors = [
     {name = "Parag Mehta", email = "pmehta@pmehta.com"},
 ]
@@ -21,7 +23,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/paragm/netbox-render"
+Homepage = "https://pypi.org/project/netbox-render/"
+Release Notes = "https://github.com/paragm/netbox-render/releases"
+GitHub = "https://github.com/paragm/netbox-render"
+Repository = "https://github.com/paragm/netbox-render.git"
 Changelog = "https://github.com/paragm/netbox-render/blob/main/CHANGELOG.md"
 Issues = "https://github.com/paragm/netbox-render/issues"
 
