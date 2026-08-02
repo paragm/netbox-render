@@ -46,18 +46,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
       - name: Extract version from tag
         id: version
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
-      - name: Extract changelog for this version
-        id: changelog
+      - name: Auto-update CHANGELOG if needed
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
         run: |
-          TAG="${{ steps.version.outputs.tag }}"
           VERSION="${TAG#v}"
-          NOTES=$(sed -n "/^## ${TAG}\b\|^## v\?${VERSION}\b/,/^## /{ /^## ${TAG}\b\|^## v\?${VERSION}\b/d; /^## /d; p; }" CHANGELOG.md)
-          echo "notes<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$NOTES" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          if grep -q "^## v\?${VERSION}\b" CHANGELOG.md; then
+            echo "CHANGELOG already has entry for v${VERSION}, skipping"
+            exit 0
+          fi
+
+          DATE=$(date -u +%Y-%m-%d)
+          PREV_TAG=$(git tag --sort=-v:refname | grep -v "^${TAG}$" | head -1)
+
+          if [ -n "$PREV_TAG" ]; then
+            COMMITS=$(git log "${PREV_TAG}..${TAG}" --pretty=format:"- %s" --no-merges)
+          else
+            COMMITS=$(git log "${TAG}" --pretty=format:"- %s" --no-merges)
+          fi
+
+          {
+            echo "# Changelog"
+            echo ""
+            echo "## v${VERSION} (${DATE})"
+            echo ""
+            echo "${COMMITS}"
+            echo ""
+            sed -n '/^## /,$p' CHANGELOG.md
+          } > CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG for ${TAG} [skip ci]"
+          git push origin main
       - name: Download dist artifacts
         uses: actions/download-artifact@v4
         with:
@@ -67,13 +96,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
-          NOTES: ${{ steps.changelog.outputs.notes }}
-        run: |
-          if [ -n "$NOTES" ]; then
-            # Combine manual changelog + auto-generated commit notes
-            gh release create "$TAG" dist/* --title "$TAG" --generate-notes --notes-start-tag "$TAG" \
-              --notes "$(printf '%s\n\n---\n\n' "$NOTES")$(gh api repos/${{ github.repository }}/releases/generate-notes -f tag_name="$TAG" --jq .body)"
-          else
-            # No manual changelog entry — use auto-generated only
-            gh release create "$TAG" dist/* --title "$TAG" --generate-notes
-          fi
+        run: gh release create "$TAG" dist/* --title "$TAG" --generate-notes

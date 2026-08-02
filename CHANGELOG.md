@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.1.5 (2026-08-01)
+
+Packaging and metadata improvements. No code changes.
+
+- Added classifiers, dev dependencies, ruff and pytest config to pyproject.toml
+- Updated README compatibility table
+- Fixed duplicate "Full Changelog" in release notes
+- Auto-generate CHANGELOG from commits when no manual entry exists
+
 ## v0.1.4 (2026-07-31)
 
 Cleaned up docs. No code changes.
