@@ -83,6 +83,61 @@ My production setup for a 5U shelf:
 └──────────────────────────┘
 ```
 
+## Grid layout for dense shelves
+
+When many devices share a small shelf (e.g. 6 Mac Minis in 2U, or 12 Raspberry Pis in 2U), stacking bays vertically makes them too short to read. The plugin supports a **grid layout** that arranges bays in rows and columns.
+
+### Auto-calculation
+
+If the per-bay height drops below 15 pixels, the plugin automatically picks a column count that minimizes the cell aspect ratio — producing the most square-ish cells possible. No configuration needed.
+
+### Per-device-type overrides
+
+For full control, set the column count per device type slug in `PLUGINS_CONFIG`:
+
+```python
+PLUGINS_CONFIG = {
+    'netbox_render': {
+        'layouts': {
+            'mac-mini-shelf-2u': {'columns': 3},   # 6 bays → 3×2 grid
+            'rpi-cluster-2u': {'columns': 5},       # 20 bays → 5×4 grid
+        },
+    },
+}
+```
+
+The key is the device type **slug** (visible on the device type page in NetBox). The `columns` value must be an integer between 1 and the number of bays — invalid values log a warning and fall back to auto-calculation.
+
+### What it looks like
+
+**6 Mac Minis in a 2U shelf (columns: 3):**
+```
+┌──────────┬──────────┬──────────┐
+│ 1: mini1 │ 2: mini2 │ 3: mini3 │
+├──────────┼──────────┼──────────┤
+│ 4: mini4 │ 5: mini5 │ 6: mini6 │
+└──────────┴──────────┴──────────┘
+```
+
+**7 Raspberry Pis in a 2U shelf (columns: 3):**
+```
+┌──────────┬──────────┬──────────┐
+│ 1: rpi-1 │ 2: rpi-2 │ 3: rpi-3 │
+├──────────┼──────────┼──────────┤
+│ 4: rpi-4 │ 5: rpi-5 │ 6: rpi-6 │
+├──────────┼──────────┼──────────┤
+│ 7: rpi-7 │ (empty)  │ (empty)  │
+└──────────┴──────────┴──────────┘
+```
+
+Partial last rows are filled with empty blocked cells matching the stock NetBox style.
+
+### Tips for grid layouts
+
+- **`columns: 1`** forces a single-column vertical stack regardless of bay count
+- The auto-calculation favors squarer cells — for a wide device with 6 bays in 2U, it may choose a single row of 6 narrow columns. Use an override if you prefer 3×2
+- Grid lines render as thin separators so the layout is clear without being heavy
+
 ## Tips
 
 - **Name shelves by position** (e.g. "Shelf-RU35") for easy lookup

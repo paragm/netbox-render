@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.2.0 (2026-08-03)
+
+Grid layout for dense shelf devices.
+
+- Grid layout: auto-arrange bays in rows and columns when vertical stacking is too short
+- Auto-calculation picks optimal column count by minimizing cell aspect ratio
+- Per-device-type config overrides via `layouts` setting (key = device type slug)
+- Config validation: invalid column values fall back to auto with a logged warning
+- Empty padding cells rendered for partial last rows
+- Updated docs and README with grid layout examples and configuration reference
+
 ## v0.1.5 (2026-08-01)
 
 Packaging and metadata improvements. No code changes.

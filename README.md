@@ -34,7 +34,7 @@ Bays sort alphabetically by name — there's no numeric position field in NetBox
 
 | NetBox | Plugin | Status |
 |--------|--------|--------|
-| 4.6.x  | 0.1.5  | Tested |
+| 4.6.x  | 0.2.0  | Tested |
 
 Startup checks verify the patched method signature hasn't changed. If it has, the plugin raises a `RuntimeError` instead of loading.
 
@@ -60,17 +60,30 @@ For development: `pip install -e .`
 
 ## Configuration
 
-One option in `PLUGINS_CONFIG`:
-
 ```python
 PLUGINS_CONFIG = {
     'netbox_render': {
-        'enable_images': True,  # default: False
+        'enable_images': True,       # default: False
+        'layouts': {                  # default: {} (auto-calculate)
+            'mac-mini-shelf-2u': {'columns': 3},
+            'rpi-cluster-2u': {'columns': 5},
+        },
     },
 }
 ```
 
-When enabled, bay sections show the child device type's front/rear image with a text label overlay. Requires restart.
+| Key | Default | Description |
+|-----|---------|-------------|
+| `enable_images` | `False` | Show device type front/rear images in bay sections |
+| `layouts` | `{}` | Per-device-type grid layout overrides (key = device type slug) |
+
+### Grid layout
+
+Dense shelves (many bays in few rack units) automatically switch to a grid layout when vertical stacking would make bays too short. The column count is auto-calculated to produce the most square cells.
+
+Override with `layouts` using the device type slug as the key and `{'columns': N}` as the value. Invalid values (zero, non-integer, exceeding bay count) fall back to auto-calculation with a logged warning.
+
+See the [shelf devices guide](docs/shelf-devices-guide.md) for detailed examples.
 
 ## Shelf device guide
 

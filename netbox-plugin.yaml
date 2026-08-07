@@ -1,6 +1,6 @@
-version: 0.1
+version: 0.2
 package_name: netbox-render
 compatibility:
-  - release: 0.1.5
+  - release: 0.2.0
     netbox_min: 4.6.0
     netbox_max: 4.6.7

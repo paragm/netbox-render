@@ -14,6 +14,7 @@ class NetBoxRenderConfig(PluginConfig):
     max_version = '4.6.99'
     default_settings = {
         'enable_images': False,
+        'layouts': {},
     }
 
     def ready(self):
