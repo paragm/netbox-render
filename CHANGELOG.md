@@ -1,14 +1,19 @@
 # Changelog
 
-## v0.2.0 (2026-08-03)
+## v0.2.0 (2026-08-07)
 
-Grid layout for dense shelf devices.
+Grid layout, text wrapping, and device type image support for bay sections.
 
-- Grid layout: auto-arrange bays in rows and columns when vertical stacking is too short
-- Auto-calculation picks optimal column count by minimizing cell aspect ratio
+- Grid layout: auto-arrange bays using aspect-ratio optimization with tie-breaking for horizontal preference
+- Auto-calculation uses bay count, device width, and U height to determine optimal column count
 - Per-device-type config overrides via `layouts` setting (key = device type slug)
 - Config validation: invalid column values fall back to auto with a logged warning
+- Minimum cell dimension guards (30px width, 8px height) prevent unusable layouts
 - Empty padding cells rendered for partial last rows
+- Text wrapping: bay labels wrap at word boundaries (spaces, hyphens, underscores) with hard-break fallback
+- Font scaling for narrow cells (min 9px for cells under 100px wide)
+- Device type image rendering in bay sections (`enable_images` config)
+- Image overlay labels positioned at bottom of cell with stroke outline for readability
 - Updated docs and README with grid layout examples and configuration reference
 
 ## v0.1.5 (2026-08-01)
