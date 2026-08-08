@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.1 (2026-08-08)
+
+- fix: address ultrareview findings for grid rendering
+- docs: update README and shelf guide for v0.2.0 features
+
 ## v0.2.0 (2026-08-07)
 
 Grid layout, text wrapping, and device type image support for bay sections.
