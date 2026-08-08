@@ -13,9 +13,11 @@ Out of the box, NetBox shows a device-bay device as one rectangle with an occupa
 I patched `RackElevationSVG._draw_device` so each bay gets its own section showing:
 
 - Bay index (1, 2, 3, ...) sorted by bay name
-- Child device name, or "(empty)"
+- Child device name with text wrapping for long names, or "(empty)"
 - Role color on the front face (rear renders grey, matching stock behavior)
 - Clickable link to the child device page
+- Optional device type images with label overlay (`enable_images`)
+- Auto grid layout for dense shelves (multiple bays arranged in columns)
 
 Devices without bays are untouched.
 
@@ -79,7 +81,7 @@ PLUGINS_CONFIG = {
 
 ### Grid layout
 
-Dense shelves (many bays in few rack units) automatically switch to a grid layout when vertical stacking would make bays too short. The column count is auto-calculated to produce the most square cells.
+The plugin auto-calculates the optimal column count by minimizing cell aspect ratio. When layouts tie (e.g. 2×2 vs 4×1), it prefers fewer empty cells and more columns — so typical shelves auto-detect a horizontal row while tall chassis devices stack vertically.
 
 Override with `layouts` using the device type slug as the key and `{'columns': N}` as the value. Invalid values (zero, non-integer, exceeding bay count) fall back to auto-calculation with a logged warning.
 

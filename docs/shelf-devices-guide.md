@@ -72,16 +72,13 @@ My production setup for a 5U shelf:
 
 **With netbox_render:**
 ```
-┌──────────────────────────┐
-│ 1: frame03               │  ← clickable, colored by role
-├──────────────────────────┤
-│ 2: (empty)               │
-├──────────────────────────┤
-│ 3: (empty)               │
-├──────────────────────────┤
-│ 4: (empty)               │
-└──────────────────────────┘
+┌──────┬──────┬──────┬──────┐
+│  1:  │  2:  │  3:  │  4:  │
+│frame │(empt │(empt │(empt │
+│  03  │  y)  │  y)  │  y)  │
+└──────┴──────┴──────┴──────┘
 ```
+Each bay is clickable, colored by role, with text wrapping for long names.
 
 ## Grid layout for dense shelves
 
@@ -89,7 +86,7 @@ When many devices share a small shelf (e.g. 6 Mac Minis in 2U, or 12 Raspberry P
 
 ### Auto-calculation
 
-If the per-bay height drops below 15 pixels, the plugin automatically picks a column count that minimizes the cell aspect ratio — producing the most square-ish cells possible. No configuration needed.
+The plugin automatically picks a column count that minimizes the cell aspect ratio — producing the most square cells possible. When two layouts produce the same aspect ratio (e.g. 2×2 vs 4×1 for a 5U shelf with 4 bays), it prefers fewer empty cells and more columns. This means typical shelves (few bays, moderate height) auto-detect a single horizontal row, while tall chassis devices stack vertically. No configuration needed.
 
 ### Per-device-type overrides
 
@@ -132,10 +129,18 @@ The key is the device type **slug** (visible on the device type page in NetBox).
 
 Partial last rows are filled with empty blocked cells matching the stock NetBox style.
 
+### Text wrapping and font scaling
+
+Bay labels wrap at word boundaries (spaces, hyphens, underscores) when they don't fit in a single line. If no word boundary is found, the label hard-breaks at the character limit. Cells narrower than 100px use a scaled-down font size (minimum 9px).
+
+### Device type images
+
+When `enable_images: True` is set, bay sections show the child device type's front/rear image with a text label overlay positioned at the bottom of the cell. The label uses a stroke outline for readability over images. The child device type must have a front image uploaded in NetBox.
+
 ### Tips for grid layouts
 
 - **`columns: 1`** forces a single-column vertical stack regardless of bay count
-- The auto-calculation favors squarer cells — for a wide device with 6 bays in 2U, it may choose a single row of 6 narrow columns. Use an override if you prefer 3×2
+- The auto-calculation respects minimum cell dimensions (30px wide, 8px tall) — dense devices with many bays won't produce unusably narrow cells
 - Grid lines render as thin separators so the layout is clear without being heavy
 
 ## Tips
