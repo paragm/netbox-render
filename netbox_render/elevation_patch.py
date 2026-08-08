@@ -108,11 +108,13 @@ def _render_wrapped_text(container, lines, text_x, bay_y, cell_height,
         if stroke_outline:
             container.add(Text(
                 line_text, stroke='black', stroke_width='0.3em',
-                stroke_linejoin='round', class_=f'device-image-label{css_extra}',
+                stroke_linejoin='round', clip_path=f"url(#{clip_id})",
+                class_=f'device-image-label{css_extra}',
                 **base_kwargs,
             ))
             container.add(Text(
                 line_text, fill='white',
+                clip_path=f"url(#{clip_id})",
                 class_=f'device-image-label{css_extra}',
                 **base_kwargs,
             ))
@@ -190,6 +192,8 @@ def _patched_draw_device(self, device, coords, size, color=None, image=None):
             label_lines = [str(index)]
         else:
             label_lines = _wrap_label(label, cell_width, font_size)
+            max_lines = max(1, int(cell_height / (font_size * 1.3)))
+            label_lines = label_lines[:max_lines]
 
         clip_id = f"clip-bay-{device.pk}-{i}"
         clip_path = ClipPath(id=clip_id)
@@ -263,13 +267,14 @@ def _patched_draw_device(self, device, coords, size, color=None, image=None):
         if device_url:
             self.drawing.add(link)
 
+    padding_extra = ' shaded' if self.highlight_devices else ''
     total_cells = columns * rows
     for i in range(n_bays, total_cells):
         col = i % columns
         row = i // columns
         bay_x = x + col * cell_width
         bay_y = y + row * cell_height
-        self.drawing.add(Rect((bay_x, bay_y), (cell_width, cell_height), class_='slot blocked'))
+        self.drawing.add(Rect((bay_x, bay_y), (cell_width, cell_height), class_=f'slot blocked{padding_extra}'))
         if row > 0:
             self.drawing.add(Line(
                 start=(bay_x, bay_y),
